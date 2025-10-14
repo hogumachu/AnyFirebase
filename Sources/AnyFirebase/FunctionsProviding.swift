@@ -7,43 +7,24 @@ public protocol FunctionsProviding {
   var functions: Functions { get }
   var decoder: JSONDecoder { get }
   
-  func request(_ target: Target) async throws -> Void
+  func request(_ target: Target) async throws -> CallableResult
 }
 
 extension FunctionsProviding {
-  public func request(_ target: Target) async throws -> Void {
-    _ = try await functions.call(request: target)
-  }
-  
-  public func request(
-    _ target: Target
-  ) async throws -> Target.Response where Target.Response: Decodable {
-    return try await functions.call(request: target, decoder: decoder)
+  public func request(_ target: Target) async throws -> CallableResult {
+    return try await functions.call(request: target)
   }
 }
 
 // MARK: - FunctionsProviding+PluginCompatible
 
 extension FunctionsProviding where Self: PluginCompatible {
-  public func request(_ target: Target) async throws -> Void {
+  public func request(_ target: Target) async throws -> CallableResult {
     willCall(target)
     do {
-      let response = try await functions.call(request: target)
-      didCall(target, data: response)
-    } catch {
-      didCatch(target, error: error)
-      throw error
-    }
-  }
-  
-  public func request(
-    _ target: Target
-  ) async throws -> Target.Response where Target.Response: Decodable {
-    willCall(target)
-    do {
-      let response = try await functions.call(request: target, decoder: decoder)
-      didCall(target, data: response)
-      return response
+      let result = try await functions.call(request: target)
+      didCall(target, result: result)
+      return result
     } catch {
       didCatch(target, error: error)
       throw error

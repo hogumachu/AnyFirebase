@@ -2,20 +2,21 @@ import Foundation
 
 public protocol Pluggable {
   func willCall(_ target: any Callable)
-  func didCall(_ target: any Callable, data: Any)
+  func didCall(_ target: any Callable, result: CallableResult)
   func didCatch(_ target: any Callable, error: Error)
 }
 
 extension Pluggable {
   public func willCall(_ target: any Callable) {}
-  public func didCall(_ target: any Callable, data: Any) {}
+  public func didCall(_ target: any Callable, result: CallableResult) {}
   public func didCatch(_ target: any Callable, error: Error) {}
 }
 
 public protocol PluginCompatible {
-  var plugins: [Pluggable] { get set }
+  var plugins: [Pluggable] { get }
+  
   func willCall(_ target: any Callable)
-  func didCall(_ target: any Callable, data: Any)
+  func didCall(_ target: any Callable, result: CallableResult)
   func didCatch(_ target: any Callable, error: Error)
 }
 
@@ -26,9 +27,9 @@ extension PluginCompatible {
     }
   }
   
-  public func didCall(_ target: any Callable, data: Any) {
+  public func didCall(_ target: any Callable, result: CallableResult) {
     plugins.forEach {
-      $0.didCall(target, data: data)
+      $0.didCall(target, result: result)
     }
   }
   
