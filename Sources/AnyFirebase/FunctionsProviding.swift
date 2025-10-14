@@ -22,10 +22,11 @@ extension FunctionsProviding {
   }
 }
 
+// MARK: - FunctionsProviding+PluginCompatible
+
 extension FunctionsProviding where Self: PluginCompatible {
   public func request(_ target: Target) async throws -> Void {
     willCall(target)
-    
     do {
       let response = try await functions.call(request: target)
       didCall(target, data: response)
