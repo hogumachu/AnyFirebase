@@ -5,7 +5,6 @@ public protocol FunctionsProviding {
   associatedtype Target: Callable
   
   var functions: Functions { get }
-  var decoder: JSONDecoder { get }
   
   func request(_ target: Target) async throws -> CallableResult
 }
